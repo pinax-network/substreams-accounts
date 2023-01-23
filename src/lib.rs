@@ -1,53 +1,45 @@
 mod abi;
 mod pb;
-use hex_literal::hex;
-use pb::erc721;
-use substreams::prelude::*;
-use substreams::{log, store::StoreAddInt64, Hex};
-use substreams_ethereum::{pb::eth::v2 as eth, NULL_ADDRESS};
 
-// Bored Ape Club Contract
-const TRACKED_CONTRACT: [u8; 20] = hex!("bc4ca0eda7647a8ab7c2061c2e118a18a936f13d");
+// use substreams::{log};
+use pb::accounts;
 
-substreams_ethereum::init!();
-
-/// Extracts transfers events from the contract
+/// Extracts new account events from the contract
 #[substreams::handlers::map]
-fn map_transfers(blk: eth::Block) -> Result<erc721::Transfers, substreams::errors::Error> {
-    Ok(erc721::Transfers {
-        transfers: blk
-            .events::<abi::erc721::events::Transfer>(&[&TRACKED_CONTRACT])
-            .map(|(transfer, log)| {
-                substreams::log::info!("NFT Transfer seen");
+fn map_accounts(blk: substreams_antelope_core::pb::antelope::Block) -> Result<accounts::Accounts, substreams::errors::Error> {
+    let mut accounts = vec![];
 
-                erc721::Transfer {
-                    trx_hash: log.receipt.transaction.hash.clone(),
-                    from: transfer.from,
-                    to: transfer.to,
-                    token_id: transfer.token_id.to_u64(),
-                    ordinal: log.block_index() as u64,
+    for trx in blk.clone().all_transaction_traces() {
+        let mut ordinal = 0_u32;
+        for trace in &trx.action_traces {
+            let action = trace.action.as_ref().unwrap().clone();
+            // log::debug!("Found action {}::{} action in block #{}", action.account, action.name, blk.number);
+            if action.account == "eosio" && action.name == "newaccount" {
+                if let Ok(params) = action.json_data.parse::<abi::NewAccount>() {
+                    accounts.push(accounts::Account {
+                        name: params.name,
+                        creator: params.creator,
+                        timestamp: Some(blk.header.as_ref().unwrap().timestamp.as_ref().unwrap().clone()),
+                        ram_bytes: 0,
+                        owner_public_key: params.owner.keys[0].key.clone(),
+                        active_public_key: params.active.keys[0].key.clone(),
+                        ordinal,
+                    });
+                    ordinal += 1;
                 }
-            })
-            .collect(),
-    })
-}
+            }
 
-/// Store the total balance of NFT tokens for the specific TRACKED_CONTRACT by holder
-#[substreams::handlers::store]
-fn store_transfers(transfers: erc721::Transfers, s: StoreAddInt64) {
-    for transfer in transfers.transfers {
-        if transfer.from != NULL_ADDRESS {
-            log::info!("Found a transfer out {}", Hex(&transfer.trx_hash));
-            s.add(transfer.ordinal, generate_key(&transfer.from), -1);
-        }
-
-        if transfer.to != NULL_ADDRESS {
-            log::info!("Found a transfer in {}", Hex(&transfer.trx_hash));
-            s.add(transfer.ordinal, generate_key(&transfer.to), 1);
+            if action.account == "eosio" && action.name != "buyrambytes" {
+                if let Ok(params) = action.json_data.parse::<abi::BuyRamBytes>() {
+                    if let Some(last) = accounts.last_mut() {
+                        if last.name == params.receiver {
+                            last.ram_bytes = params.bytes;
+                        }
+                    }
+                }
+            }
         }
     }
+    Ok(accounts::Accounts { accounts })
 }
 
-fn generate_key(holder: &Vec<u8>) -> String {
-    return format!("total:{}:{}", Hex(holder), Hex(TRACKED_CONTRACT));
-}

@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package antelope.accounts.v1;
+
+import "google/protobuf/timestamp.proto";
+
+message Accounts {
+  repeated Account accounts = 1;
+}
+
+message Account {
+  string name = 1;                                // account name
+  string creator = 2;                             // account creator
+  google.protobuf.Timestamp timestamp = 3;        // account creation time stamp
+  string owner_public_key = 4;                    // owner permission public key
+  string active_public_key = 5;                   // active permission public key
+  uint32 ram_bytes = 6;                           // amount of RAM bought
+  uint32 ordinal = 7;                             // order within the block
+}
