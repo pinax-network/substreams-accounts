@@ -3,6 +3,9 @@ mod pb;
 
 // use substreams::{log};
 use pb::accounts;
+use substreams::proto;
+use substreams_sink_kv::pb::kv::KvOperations;
+use substreams::errors::Error;
 
 /// Extracts new account events from the contract
 #[substreams::handlers::map]
@@ -43,3 +46,18 @@ fn map_accounts(blk: substreams_antelope_core::pb::antelope::Block) -> Result<ac
     Ok(accounts::Accounts { accounts })
 }
 
+
+#[substreams::handlers::map]
+pub fn kv_out(
+    accounts: accounts::Accounts,
+) -> Result<KvOperations, Error> {
+    let mut kv_ops: KvOperations = Default::default();
+    for account in accounts.accounts {
+        let key = account.name.clone();
+        let value = proto::encode(&account).unwrap();
+        let ordinal = account.ordinal as u64;
+        kv_ops.push_new(key, value, ordinal);
+    }
+
+    Ok(kv_ops)
+}

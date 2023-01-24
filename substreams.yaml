@@ -25,4 +25,11 @@ modules:
       - source: sf.antelope.type.v2.Block
     output:
       type: proto:antelope.accounts.v1.Accounts
+  - name: kv_out
+    kind: map
+    initialBlock: 0
+    inputs:
+      - map: map_accounts
+    output:
+      type: proto:sf.substreams.kv.v1.KVOperations
 
