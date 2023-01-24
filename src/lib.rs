@@ -26,6 +26,7 @@ fn map_accounts(blk: substreams_antelope_core::pb::antelope::Block) -> Result<ac
                         ram_bytes: 0,
                         owner_public_key: params.owner.keys[0].key.clone(),
                         active_public_key: params.active.keys[0].key.clone(),
+                        trx_id: trace.transaction_id.clone(),
                         ordinal,
                     });
                     ordinal += 1;

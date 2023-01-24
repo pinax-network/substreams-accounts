@@ -15,5 +15,6 @@ message Account {
   string owner_public_key = 4;                    // owner permission public key
   string active_public_key = 5;                   // active permission public key
   uint32 ram_bytes = 6;                           // amount of RAM bought
-  uint32 ordinal = 7;                             // order within the block
+  string trx_id = 7;                              // transaction id
+  uint32 ordinal = 8;                             // order within the transaction
 }

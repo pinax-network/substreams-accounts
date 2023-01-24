@@ -90,9 +90,16 @@ export class Account extends Message<Account> {
   ramBytes = 0;
 
   /**
-   * order within the block
+   * transaction id
    *
-   * @generated from field: uint32 ordinal = 7;
+   * @generated from field: string trx_id = 7;
+   */
+  trxId = "";
+
+  /**
+   * order within the transaction
+   *
+   * @generated from field: uint32 ordinal = 8;
    */
   ordinal = 0;
 
@@ -110,7 +117,8 @@ export class Account extends Message<Account> {
     { no: 4, name: "owner_public_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 5, name: "active_public_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 6, name: "ram_bytes", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
-    { no: 7, name: "ordinal", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 7, name: "trx_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "ordinal", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
