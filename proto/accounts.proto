@@ -17,4 +17,5 @@ message Account {
   uint32 ram_bytes = 6;                           // amount of RAM bought
   string trx_id = 7;                              // transaction id
   uint32 ordinal = 8;                             // order within the transaction
+  int64 counter = 9;                              // account global "mint number" starting with 1
 }

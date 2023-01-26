@@ -3,9 +3,10 @@ mod pb;
 
 // use substreams::{log};
 use pb::accounts;
-use substreams::proto;
+use substreams::{proto, store::StoreGet};
 use substreams_sink_kv::pb::kv::KvOperations;
 use substreams::errors::Error;
+use substreams::prelude::*;
 
 /// Extracts new account events from the contract
 #[substreams::handlers::map]
@@ -28,6 +29,7 @@ fn map_accounts(blk: substreams_antelope_core::pb::antelope::Block) -> Result<ac
                         active_public_key: params.active.keys[0].key.clone(),
                         trx_id: trace.transaction_id.clone(),
                         ordinal,
+                        counter: 0,
                     });
                     ordinal += 1;
                 }
@@ -47,18 +49,33 @@ fn map_accounts(blk: substreams_antelope_core::pb::antelope::Block) -> Result<ac
     Ok(accounts::Accounts { accounts })
 }
 
+#[substreams::handlers::store]
+fn store_account_counter(accs: accounts::Accounts, s: substreams::store::StoreAddInt64) {
+    let mut i = 1;
+    for _ in accs.accounts {
+        substreams::store::StoreAdd::add(&s, i, "account_counter", 1);
+        i += 1;
+    }
+}
+
 
 #[substreams::handlers::map]
 pub fn kv_out(
     accounts: accounts::Accounts,
+    store_account_count: substreams::store::StoreGetInt64
 ) -> Result<KvOperations, Error> {
     let mut kv_ops: KvOperations = Default::default();
-    for account in accounts.accounts {
+    let mut i = 1;
+    for mut account in accounts.accounts {
+        account.counter = store_account_count.get_at(i, "account_counter").unwrap();
         let key = account.name.clone();
         let value = proto::encode(&account).unwrap();
         let ordinal = account.ordinal as u64;
         kv_ops.push_new(key, value, ordinal);
+        substreams::log::debug!("Account {} minted #{} in trx: {}", account.name, account.counter, account.trx_id);
+        i += 1;
     }
 
     Ok(kv_ops)
 }
+
