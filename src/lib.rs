@@ -6,7 +6,7 @@ use pb::accounts;
 use substreams::{proto, store::StoreGet};
 use substreams_sink_kv::pb::kv::KvOperations;
 use substreams::errors::Error;
-use substreams::prelude::*;
+use substreams::{prelude::*};
 
 /// Extracts new account events from the contract
 #[substreams::handlers::map]
@@ -35,7 +35,7 @@ fn map_accounts(blk: substreams_antelope_core::pb::antelope::Block) -> Result<ac
                 }
             }
 
-            if action.account == "eosio" && action.name != "buyrambytes" {
+            if action.account == "eosio" && action.name == "buyrambytes" {
                 if let Ok(params) = action.json_data.parse::<abi::BuyRamBytes>() {
                     if let Some(last) = accounts.last_mut() {
                         if last.name == params.receiver {
