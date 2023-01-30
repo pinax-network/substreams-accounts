@@ -4,4 +4,4 @@
 buf.gen.yaml
 /target
 *.spkg
-my-badger.db
+*-badger.db
