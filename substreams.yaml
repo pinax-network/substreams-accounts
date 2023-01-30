@@ -9,6 +9,7 @@ imports:
 protobuf:
   files:
     - accounts.proto
+    - kv.proto
   importPaths:
     - ./proto
 
@@ -39,5 +40,5 @@ modules:
       - map: map_accounts
       - store: store_account_counter
     output:
-      type: proto:sf.substreams.kv.v1.KVOperations
+      type: proto:sf.substreams.sink.kv.v1.KVOperations
 
