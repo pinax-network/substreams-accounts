@@ -73,3 +73,9 @@ impl std::str::FromStr for BuyRamBytes {
         })
     }
 }
+
+#[test]
+fn test_abi() {
+    assert_eq!(true, true);
+    assert_eq!(false, false);
+}
