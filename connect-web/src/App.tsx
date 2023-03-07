@@ -11,10 +11,12 @@ import {
 import { Kv } from "../gen/read_connectweb";
 import { Account } from "../gen/accounts_pb";
 
+const BASE_URL = import.meta.env.VITE_RPC_ENDPOINT ?? "http://localhost:8000"
+
 // The transport defines what type of endpoint we're hitting.
 // In our example we'll be communicating with a Connect endpoint.
 const transport = createConnectTransport({
-    baseUrl: "http://localhost:8000",
+    baseUrl: BASE_URL,
 });
 
 // Here we make the client itself, combining the service
