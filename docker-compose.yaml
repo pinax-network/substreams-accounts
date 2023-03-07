@@ -4,9 +4,13 @@ services:
     image: alpine:latest
     container_name: "substreams-sink"
     restart: always
-    command: sh -c 'wget https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grpcurl_1.8.7_linux_x86_64.tar.gz -O - | tar -xz -C /usr/local/bin;
-      wget https://github.com/streamingfast/substreams-sink-kv/releases/download/v0.1.1/substreams-sink-kv_0.1.1_linux_x86_64.tar.gz -O - | tar -xz -C /usr/local/bin;
-      substreams-sink-kv run --listen-addr=0.0.0.0:8000 "badger3:///$$(pwd)/my-badger.db" "eos.firehose.eosnation.io:9001" "https://github.com/pinax-network/substreams-accounts/releases/download/v0.1.0/substreams-accounts-v0.1.0.spkg" kv_out'
+    command:
+      - sh
+      - -c
+      - |
+        wget https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grpcurl_1.8.7_linux_x86_64.tar.gz -O - | tar -xz -C /usr/local/bin;
+        wget https://github.com/streamingfast/substreams-sink-kv/releases/download/v0.1.2/substreams_sink_kv_linux_x86_64.tar.gz -O - | tar -xz -C /usr/local/bin;
+        substreams-sink-kv run --listen-addr=0.0.0.0:8000 "badger3:///$$(pwd)/my-badger.db" "eos.firehose.eosnation.io:9001" "https://github.com/pinax-network/substreams/releases/download/accounts-v0.4.0/accounts-v0.4.0.spkg" kv_out
     ports:
       - "8000:8000"
     volumes:
