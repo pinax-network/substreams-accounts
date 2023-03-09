@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3, Timestamp } from "@bufbuild/protobuf";
+import { Message, proto3, protoInt64, Timestamp } from "@bufbuild/protobuf";
 
 /**
  * @generated from message antelope.accounts.v1.Accounts
@@ -44,64 +44,148 @@ export class Accounts extends Message<Accounts> {
 }
 
 /**
- * @generated from message antelope.accounts.v1.Account
+ * @generated from message antelope.accounts.v1.Creator
  */
-export class Account extends Message<Account> {
-  /**
-   * account name
-   *
-   * @generated from field: string name = 1;
-   */
-  name = "";
-
+export class Creator extends Message<Creator> {
   /**
    * account creator
    *
-   * @generated from field: string creator = 2;
+   * @generated from field: string creator = 1;
    */
   creator = "";
 
   /**
-   * account creation time stamp
+   * creator service (ENS, SignupEOS)
    *
-   * @generated from field: google.protobuf.Timestamp timestamp = 3;
+   * @generated from field: optional string service = 2;
    */
-  timestamp?: Timestamp;
+  service?: string;
+
+  /**
+   *  - if not set, creator is a normal user
+   *
+   * creator authorization (genialwombat@ops)
+   *
+   * @generated from field: repeated antelope.accounts.v1.PermissionLevel authorizations = 3;
+   */
+  authorizations: PermissionLevel[] = [];
+
+  constructor(data?: PartialMessage<Creator>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "antelope.accounts.v1.Creator";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "creator", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "service", kind: "scalar", T: 9 /* ScalarType.STRING */, opt: true },
+    { no: 3, name: "authorizations", kind: "message", T: PermissionLevel, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Creator {
+    return new Creator().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Creator {
+    return new Creator().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Creator {
+    return new Creator().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Creator | PlainMessage<Creator> | undefined, b: Creator | PlainMessage<Creator> | undefined): boolean {
+    return proto3.util.equals(Creator, a, b);
+  }
+}
+
+/**
+ * @generated from message antelope.accounts.v1.Account
+ */
+export class Account extends Message<Account> {
+  /**
+   * action details
+   *
+   * account creator
+   *
+   * @generated from field: antelope.accounts.v1.Creator creator = 1;
+   */
+  creator?: Creator;
+
+  /**
+   * new account name
+   *
+   * @generated from field: string name = 2;
+   */
+  name = "";
 
   /**
    * owner permission public key
    *
-   * @generated from field: string owner_public_key = 4;
+   * @generated from field: antelope.accounts.v1.Authority owner = 3;
    */
-  ownerPublicKey = "";
+  owner?: Authority;
 
   /**
    * active permission public key
    *
-   * @generated from field: string active_public_key = 5;
+   * @generated from field: antelope.accounts.v1.Authority active = 4;
    */
-  activePublicKey = "";
+  active?: Authority;
 
   /**
-   * amount of RAM bought
+   * transaction details
    *
-   * @generated from field: uint32 ram_bytes = 6;
+   * account creation timestamp
+   *
+   * @generated from field: google.protobuf.Timestamp timestamp = 10;
    */
-  ramBytes = 0;
+  timestamp?: Timestamp;
 
   /**
    * transaction id
    *
-   * @generated from field: string trx_id = 7;
+   * @generated from field: string trx_id = 11;
    */
   trxId = "";
 
   /**
-   * order within the transaction
+   * block number
    *
-   * @generated from field: uint32 ordinal = 8;
+   * @generated from field: uint32 block_num = 12;
    */
-  ordinal = 0;
+  blockNum = 0;
+
+  /**
+   * account details
+   *
+   * amount of RAM bought
+   *
+   * @generated from field: uint32 ram_bytes = 20;
+   */
+  ramBytes = 0;
+
+  /**
+   * amount of NET staked (as quantity value)
+   *
+   * @generated from field: int64 stake_net_quantity = 21;
+   */
+  stakeNetQuantity = protoInt64.zero;
+
+  /**
+   * amount of CPU staked (as quantity value)
+   *
+   * @generated from field: int64 stake_cpu_quantity = 22;
+   */
+  stakeCpuQuantity = protoInt64.zero;
+
+  /**
+   * transfer flag
+   *
+   * @generated from field: bool transfer = 23;
+   */
+  transfer = false;
 
   constructor(data?: PartialMessage<Account>) {
     super();
@@ -111,14 +195,17 @@ export class Account extends Message<Account> {
   static readonly runtime = proto3;
   static readonly typeName = "antelope.accounts.v1.Account";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
-    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 2, name: "creator", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 3, name: "timestamp", kind: "message", T: Timestamp },
-    { no: 4, name: "owner_public_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 5, name: "active_public_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 6, name: "ram_bytes", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
-    { no: 7, name: "trx_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
-    { no: 8, name: "ordinal", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 1, name: "creator", kind: "message", T: Creator },
+    { no: 2, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "owner", kind: "message", T: Authority },
+    { no: 4, name: "active", kind: "message", T: Authority },
+    { no: 10, name: "timestamp", kind: "message", T: Timestamp },
+    { no: 11, name: "trx_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 12, name: "block_num", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 20, name: "ram_bytes", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 21, name: "stake_net_quantity", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 22, name: "stake_cpu_quantity", kind: "scalar", T: 3 /* ScalarType.INT64 */ },
+    { no: 23, name: "transfer", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Account {
@@ -135,6 +222,233 @@ export class Account extends Message<Account> {
 
   static equals(a: Account | PlainMessage<Account> | undefined, b: Account | PlainMessage<Account> | undefined): boolean {
     return proto3.util.equals(Account, a, b);
+  }
+}
+
+/**
+ * @generated from message antelope.accounts.v1.Authority
+ */
+export class Authority extends Message<Authority> {
+  /**
+   * @generated from field: uint32 threshold = 1;
+   */
+  threshold = 0;
+
+  /**
+   * @generated from field: repeated antelope.accounts.v1.KeyWeight keys = 2;
+   */
+  keys: KeyWeight[] = [];
+
+  /**
+   * @generated from field: repeated antelope.accounts.v1.PermissionLevelWeight accounts = 3;
+   */
+  accounts: PermissionLevelWeight[] = [];
+
+  /**
+   * @generated from field: repeated antelope.accounts.v1.WaitWeight waits = 4;
+   */
+  waits: WaitWeight[] = [];
+
+  constructor(data?: PartialMessage<Authority>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "antelope.accounts.v1.Authority";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "threshold", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "keys", kind: "message", T: KeyWeight, repeated: true },
+    { no: 3, name: "accounts", kind: "message", T: PermissionLevelWeight, repeated: true },
+    { no: 4, name: "waits", kind: "message", T: WaitWeight, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): Authority {
+    return new Authority().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): Authority {
+    return new Authority().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): Authority {
+    return new Authority().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: Authority | PlainMessage<Authority> | undefined, b: Authority | PlainMessage<Authority> | undefined): boolean {
+    return proto3.util.equals(Authority, a, b);
+  }
+}
+
+/**
+ * @generated from message antelope.accounts.v1.KeyWeight
+ */
+export class KeyWeight extends Message<KeyWeight> {
+  /**
+   * @generated from field: string public_key = 1;
+   */
+  publicKey = "";
+
+  /**
+   * @generated from field: uint32 weight = 2;
+   */
+  weight = 0;
+
+  constructor(data?: PartialMessage<KeyWeight>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "antelope.accounts.v1.KeyWeight";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "public_key", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "weight", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): KeyWeight {
+    return new KeyWeight().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): KeyWeight {
+    return new KeyWeight().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): KeyWeight {
+    return new KeyWeight().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: KeyWeight | PlainMessage<KeyWeight> | undefined, b: KeyWeight | PlainMessage<KeyWeight> | undefined): boolean {
+    return proto3.util.equals(KeyWeight, a, b);
+  }
+}
+
+/**
+ * @generated from message antelope.accounts.v1.PermissionLevel
+ */
+export class PermissionLevel extends Message<PermissionLevel> {
+  /**
+   * @generated from field: string actor = 1;
+   */
+  actor = "";
+
+  /**
+   * @generated from field: string permission = 2;
+   */
+  permission = "";
+
+  constructor(data?: PartialMessage<PermissionLevel>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "antelope.accounts.v1.PermissionLevel";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "actor", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "permission", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PermissionLevel {
+    return new PermissionLevel().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PermissionLevel {
+    return new PermissionLevel().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PermissionLevel {
+    return new PermissionLevel().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: PermissionLevel | PlainMessage<PermissionLevel> | undefined, b: PermissionLevel | PlainMessage<PermissionLevel> | undefined): boolean {
+    return proto3.util.equals(PermissionLevel, a, b);
+  }
+}
+
+/**
+ * @generated from message antelope.accounts.v1.PermissionLevelWeight
+ */
+export class PermissionLevelWeight extends Message<PermissionLevelWeight> {
+  /**
+   * @generated from field: antelope.accounts.v1.PermissionLevel permission = 1;
+   */
+  permission?: PermissionLevel;
+
+  /**
+   * @generated from field: uint32 weight = 2;
+   */
+  weight = 0;
+
+  constructor(data?: PartialMessage<PermissionLevelWeight>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "antelope.accounts.v1.PermissionLevelWeight";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "permission", kind: "message", T: PermissionLevel },
+    { no: 2, name: "weight", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): PermissionLevelWeight {
+    return new PermissionLevelWeight().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): PermissionLevelWeight {
+    return new PermissionLevelWeight().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): PermissionLevelWeight {
+    return new PermissionLevelWeight().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: PermissionLevelWeight | PlainMessage<PermissionLevelWeight> | undefined, b: PermissionLevelWeight | PlainMessage<PermissionLevelWeight> | undefined): boolean {
+    return proto3.util.equals(PermissionLevelWeight, a, b);
+  }
+}
+
+/**
+ * @generated from message antelope.accounts.v1.WaitWeight
+ */
+export class WaitWeight extends Message<WaitWeight> {
+  /**
+   * @generated from field: uint32 wait_sec = 1;
+   */
+  waitSec = 0;
+
+  /**
+   * @generated from field: uint32 weight = 2;
+   */
+  weight = 0;
+
+  constructor(data?: PartialMessage<WaitWeight>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime = proto3;
+  static readonly typeName = "antelope.accounts.v1.WaitWeight";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "wait_sec", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 2, name: "weight", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): WaitWeight {
+    return new WaitWeight().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): WaitWeight {
+    return new WaitWeight().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): WaitWeight {
+    return new WaitWeight().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: WaitWeight | PlainMessage<WaitWeight> | undefined, b: WaitWeight | PlainMessage<WaitWeight> | undefined): boolean {
+    return proto3.util.equals(WaitWeight, a, b);
   }
 }
 
