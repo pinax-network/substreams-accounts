@@ -11,3 +11,12 @@ services:
       - "./accounts-badger.db:/my-badger.db"
     environment:
       - SPKG_URL=https://github.com/pinax-network/substreams/releases/download/accounts-v0.4.0/accounts-v0.4.0.spkg
+
+  envoy:
+    image: envoyproxy/envoy:v1.18.3
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+      - ./envoy/read.pb:/etc/envoy/read.pb
+    ports:
+      - "8080:8080"
+      - "9901:9901"

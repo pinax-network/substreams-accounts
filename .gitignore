@@ -7,3 +7,4 @@ buf.gen.yaml
 *-badger.db
 *.log
 node_modules
+.env
