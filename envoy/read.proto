@@ -10,18 +10,30 @@ service Kv {
   // Get returns the requested value as bytes if it exists, grpc_error: NOT_FOUND otherwise.
   rpc Get(GetRequest) returns (GetResponse) {
     option (google.api.http) = {
-      get: "/get/{key=*}"
+      get: "/get"
     };
   };
 
   // GetMany returns the requested values as bytes if all of them exists, grpc_error: NOT_FOUND otherwise.
-  rpc GetMany(GetManyRequest) returns (GetManyResponse);
+  rpc GetMany(GetManyRequest) returns (GetManyResponse) {
+    option (google.api.http) = {
+      get: "/getmany"
+    };
+  };
 
   // GetByPrefix returns the next _limit_ key/value pair that match the requested prefix if any exist, grpc_error: NOT_FOUND otherwise.
-  rpc GetByPrefix(GetByPrefixRequest) returns (GetByPrefixResponse);
+  rpc GetByPrefix(GetByPrefixRequest) returns (GetByPrefixResponse) {
+    option (google.api.http) = {
+      get: "/getbyprefix"
+    };
+  };
 
   // Scan returns then next _limit_ key/value pairs starting lexicographically at the given key, grpc_error: NOT_FOUND otherwise.
-  rpc Scan(ScanRequest) returns (ScanResponse);
+  rpc Scan(ScanRequest) returns (ScanResponse) {
+    option (google.api.http) = {
+      get: "/scan"
+    };
+  };
 
 }
 
