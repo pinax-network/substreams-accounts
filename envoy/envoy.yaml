@@ -27,7 +27,7 @@ static_resources:
                 - name: envoy.filters.http.grpc_json_transcoder
                   typed_config:
                     "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
-                    proto_descriptor: "/etc/envoy/read.pb"
+                    proto_descriptor: "/etc/envoy/kv.pb"
                     services: ["sf.substreams.sink.kv.v1.Kv"]
                     match_incoming_request_route: false
                     # ignore_unknown_query_parameters: true
