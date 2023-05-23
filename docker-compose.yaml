@@ -13,10 +13,10 @@ services:
       - SPKG_URL=https://github.com/pinax-network/substreams/releases/download/accounts-v0.4.0/accounts-v0.4.0.spkg
       - SUBSTREAMS_ENDPOINT=eos.firehose.eosnation.io:9001
 
-  envoy:
-    image: envoyproxy/envoy:v1.18.3
-    volumes:
-      - ./envoy/:/etc/envoy/
-    ports:
-      - "8080:8080"
-      - "9901:9901"
+  # envoy:
+  #   image: envoyproxy/envoy:v1.18.3
+  #   volumes:
+  #     - ./envoy/:/etc/envoy/
+  #   ports:
+  #     - "8080:8080"
+  #     - "9901:9901"
