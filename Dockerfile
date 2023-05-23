@@ -8,4 +8,4 @@ RUN wget -O- https://github.com/streamingfast/substreams-sink-kv/releases/downlo
 RUN wget -O- https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh \
     | bash
 
-CMD [ "sh", "-c", "substreams-sink-kv run --listen-addr=0.0.0.0:8000 -e ${SUBSTREAMS_ENDPOINT} badger3:///my-badger.db ${SPKG_URL} kv_out" ]
+CMD [ "sh", "-c", "substreams-sink-kv inject ${SUBSTREAMS_ENDPOINT} badger3:///my-badger.db ${SPKG_URL} kv_out --listen-addr=0.0.0.0:8000" ]
