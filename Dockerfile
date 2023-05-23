@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-RUN apk update && apk add --no-cache wget tar
+RUN apt-get update && apt-get install -y wget
 
 RUN wget -O- https://github.com/streamingfast/substreams-sink-kv/releases/download/v2.1.3/substreams-sink-kv_linux_x86_64.tar.gz \
     | tar -xz -C /usr/local/bin \
