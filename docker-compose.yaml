@@ -10,7 +10,7 @@ services:
     volumes:
       - "./accounts-badger.db:/my-badger.db"
     environment:
-      - SPKG_URL=https://github.com/pinax-network/substreams/releases/download/accounts-v0.4.0/accounts-v0.4.0.spkg
+      - SPKG_URL=https://github.com/pinax-network/substreams/releases/download/accounts-v0.4.1/substreams-antelope-accounts-sink-kv-v0.4.1.spkg
       - SUBSTREAMS_ENDPOINT=eos.firehose.eosnation.io:9001
 
   # envoy:
