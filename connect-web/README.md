@@ -5,7 +5,8 @@
 # Requirements:
 
 * buf.build's `buf` command v1.11.0 or later
-* `npm` and `nodejs` with decent version
+* `nodejs` with decent version
+* `bun` v1.4.3 or later (`curl -fsSL https://bun.com/install | bash -s "bun-v1.4.3"`); npm refuses to install or run scripts here
 
 # Steps taken to create this example
 
@@ -40,7 +41,7 @@ plugins:
 
 * Generate code:
 
-`npm run buf:generate` to generate the following files under `gen/` : `kv_pb.ts`, `read_connectweb.ts`, `read_pb.ts`
+`bun run buf:generate` to generate the following files under `gen/` : `kv_pb.ts`, `read_connectweb.ts`, `read_pb.ts`
 
 * Create client from KV in App.tsx:
 
@@ -80,4 +81,5 @@ The rest is just formatting, error-handling and front-end stuff ...
 
 # Run it
 
-* `npm run dev`
+* `bun install`
+* `bun run dev`
